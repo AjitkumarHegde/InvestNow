@@ -1,0 +1,28 @@
+server:
+  port: 9191
+
+#Database properties
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/investnow?createDatabaseIfNotExist=true
+    username: investnow
+    password: investnow
+    
+  jpa:
+    database: mysql
+    show-sql: true 
+#Not a good idea to use ddl-auto(Especially with create mode) in production, apply changes manually instead    
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  application:
+    name: investnow
+  sql:
+    init:
+      platform: mysql
+
+
+
+

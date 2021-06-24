@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+  mysql:
+    image: 'mysql:latest'
+    container_name: mysql-db
+    ports:
+        - 3306:3306
+    environment:
+      MYSQL_DATABASE: investnow
+      MYSQL_USER: investnow
+      MYSQL_PASSWORD: investnow
+      MYSQL_ROOT_PASSWORD: investnowapp
+      
+  investnow:
+    image: 'investnow:latest'
+    build:
+      context: .
+    container_name: investnow
+    ports:
+        - 9191:9191
+    depends_on:
+      mysql:
+        condition: service_started
+#Enable restart on failure if app comes up before mysql is initialization is complete         
+#    restart: on-failure
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/investnow?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: investnow
+      SPRING_DATASOURCE_PASSWORD: investnow
+      
