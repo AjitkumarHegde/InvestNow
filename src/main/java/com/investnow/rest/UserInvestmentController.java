@@ -2,6 +2,8 @@ package com.investnow.rest;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,29 +27,36 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "UserInvestmentController", produces = "application/json")
 public class UserInvestmentController
 {
+    final static Logger logger = LoggerFactory.getLogger(UserInvestmentController.class);
+
     @Autowired
     private UserInvestmentService userInvestmentService;
 
     @RequestMapping(value = "/invest", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Make an investment by providing the required fields", notes = "Make an investment by providing the required fields", response = UserInvestment.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     public ResponseEntity invest(@RequestBody @Validated UserInvestment userInvestment)
     {
         try
         {
+            logger.debug("invest() -- Adding user investments ");
             return new ResponseEntity(userInvestmentService.addUserInvestment(userInvestment), HttpStatus.OK);
         }
         catch (Exception ex)
         {
-            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Exception::" +  ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @RequestMapping(value = "/getInvestmentsByUser", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Fetch the list of investments for a user", notes = "Fetch the list of investments for a user", response = UserInvestment.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     public ResponseEntity<List<UserInvestment>> getInvestmentsByUser(@RequestParam String user)
     {
         return new ResponseEntity(userInvestmentService.getInvestmentsBasedOnUser(user), HttpStatus.OK);

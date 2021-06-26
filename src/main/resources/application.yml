@@ -23,6 +23,5 @@ spring:
     init:
       platform: mysql
 
-
-
-
+jwt:
+  secret: changeit

@@ -1,5 +1,7 @@
 package com.investnow.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,23 +27,28 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "UserController", produces = "application/json")
 public class UserController
 {
+    final static Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Create a user", notes = "Create a user", response = User.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     @JsonView(View.User.class)
     public ResponseEntity signUp(@RequestBody @Validated User user)
     {
         try
         {
+            logger.debug("signUp() -- Creating user");
             return new ResponseEntity(userService.addUser(user), HttpStatus.OK);
         }
         catch(Exception ex)
         {
-            return new ResponseEntity("Excption during user signup, " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Exception::" +  ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

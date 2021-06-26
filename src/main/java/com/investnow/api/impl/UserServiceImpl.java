@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService
     @Override
     public User addUser(User user) throws Exception
     {
+
         Optional<User> existingUser = userRepository.findByUserName(user.getUsername());
         if(existingUser.isPresent())
         {

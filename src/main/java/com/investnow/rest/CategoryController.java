@@ -2,6 +2,8 @@ package com.investnow.rest;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,13 +27,17 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "CategoryController", produces = "application/json")
 public class CategoryController
 {
+    final static Logger logger = LoggerFactory.getLogger(CategoryController.class);
+
     @Autowired
     private CategoryService categoryService;
 
     @RequestMapping(value = "/getAllCategories", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Fetch the list of categories", notes = "Fetch the list of categories", response = Category.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     public ResponseEntity<List<Category>> getAllCategories()
     {
         return new ResponseEntity(categoryService.getAllCategories(), HttpStatus.OK);
@@ -40,16 +46,19 @@ public class CategoryController
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Add a category", notes = "Add a category", response = Category.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     public ResponseEntity addCategory(@RequestBody @Validated Category category)
     {
         try
         {
+            logger.debug("addCategory() -- Adding a category");
             return new ResponseEntity(categoryService.addCategory(category), HttpStatus.OK);
         }
         catch(Exception ex)
         {
-            return new ResponseEntity<>("Excption while saving the Category - " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Exception::" +  ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

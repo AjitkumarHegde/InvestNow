@@ -26,6 +26,6 @@ public class UserAuthService implements UserDetailsService
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         Optional<User> user = userRepository.findByUserName(username);
-        return user.orElseThrow(() -> new UsernameNotFoundException("Invalid Login. User doesn't exist"));
+        return user.orElseThrow(() -> new UsernameNotFoundException("Invalid Login Attempt. User doesn't exist"));
     }
 }

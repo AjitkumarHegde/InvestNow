@@ -2,11 +2,12 @@ package com.investnow.config;
 
 import java.io.IOException;
 
+import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.Filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,14 +32,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
+    private static String LOGIN_URI = "/user/login";
+
+    @Value("${jwt.secret}")
+    protected String jwtSecret;
+
     private UserAuthService userAuthService;
+
+    private JwtTokenValidator jwtTokenValidator;
 
     private ObjectMapper objectMapper;
 
     @Autowired
-    public SecurityConfig(UserAuthService userAuthService, ObjectMapper objectMapper)
+    public SecurityConfig(UserAuthService userAuthService, JwtTokenValidator jwtTokenValidator, ObjectMapper objectMapper)
     {
         this.userAuthService = userAuthService;
+        this.jwtTokenValidator = jwtTokenValidator;
         this.objectMapper = objectMapper;
     }
 
@@ -66,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
             .csrf()
             .disable()
             .addFilter(getJWTAuthenticationFilter())
-            .addFilterAfter(new JwtTokenValidator(), JWTAuthenticationFilter.class)
+            .addFilterAfter(jwtTokenValidator, JWTAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("/user/login", "/user/signup", "/v2/api-docs", "/configuration/ui", "/swagger-resources", "/swagger-ui.html", "/webjars/**")
             .permitAll()
@@ -111,10 +120,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     }
 
     @Bean
-    public JWTAuthenticationFilter getJWTAuthenticationFilter() throws Exception {
-        final JWTAuthenticationFilter filter = new JWTAuthenticationFilter(authenticationManagerBean(), objectMapper);
-        filter.setFilterProcessesUrl("/user/login");
-        return filter;
+    public JWTAuthenticationFilter getJWTAuthenticationFilter() throws Exception
+    {
+        final JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManagerBean(), objectMapper, jwtSecret);
+        jwtAuthenticationFilter.setFilterProcessesUrl(LOGIN_URI);
+        return jwtAuthenticationFilter;
     }
 
     @Bean
