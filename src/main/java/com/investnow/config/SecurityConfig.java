@@ -4,10 +4,13 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.Filter;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,6 +21,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -110,8 +116,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         filter.setFilterProcessesUrl("/user/login");
         return filter;
     }
-/*
- *  @Bean
+
+    @Bean
     public FilterRegistrationBean<Filter> webCorsFilter()
     {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -125,5 +131,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
- */
 }
