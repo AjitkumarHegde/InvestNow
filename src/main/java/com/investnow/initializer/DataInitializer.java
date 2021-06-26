@@ -1,7 +1,6 @@
 package com.investnow.initializer;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -29,6 +28,8 @@ public class DataInitializer implements ApplicationRunner
 {
     final static Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
+    private static String FILE_NAME = "data.sql";
+
     @Value("${spring.datasource.url}")
     protected String dataSourceUrl;
 
@@ -46,7 +47,7 @@ public class DataInitializer implements ApplicationRunner
             Thread.sleep(2000);
             Connection con = DriverManager.getConnection(dataSourceUrl, username, password);
             ScriptRunner runner = new ScriptRunner(con);
-            ClassPathResource resource = new ClassPathResource("data.sql");
+            ClassPathResource resource = new ClassPathResource(FILE_NAME);
             InputStream inputStream = resource.getInputStream();
             InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
             Reader reader = new BufferedReader(streamReader);
@@ -55,7 +56,7 @@ public class DataInitializer implements ApplicationRunner
         }
         catch (Exception e)
         {
-            logger.error("Exception while initializing the data on startup. Exception: {} ", e);
+            logger.error("Exception while initializing the data on startup :: ", e);
         }
     }
 }

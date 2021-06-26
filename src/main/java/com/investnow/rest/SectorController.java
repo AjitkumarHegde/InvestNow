@@ -27,13 +27,17 @@ import io.swagger.annotations.ApiResponses;
 @Api(tags = "SectorController", produces = "application/json")
 public class SectorController
 {
+    final static Logger logger = LoggerFactory.getLogger(SectorController.class);
+
     @Autowired
     private SectorService sectorService;
 
     @RequestMapping(value = "/getAllSectors", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Fetch the list of sectors", notes = "Fetch the list of sectors", response = Sector.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     public ResponseEntity<List<Sector>> getAllSectors()
     {
         return new ResponseEntity(sectorService.getAllSectors(), HttpStatus.OK);
@@ -42,16 +46,19 @@ public class SectorController
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Add a sector", notes = "Add a sector", response = Sector.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK")})
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 401, message = "UNAUTHORIZED"),
+            @ApiResponse(code = 403, message = "FORBIDDEN")})
     public ResponseEntity addSector(@RequestBody @Validated Sector sector)
     {
         try
         {
+            logger.debug("addSector() -- Adding a sector");
             return new ResponseEntity(sectorService.addSector(sector), HttpStatus.OK);
         }
         catch(Exception ex)
         {
-            return new ResponseEntity<>("Excption while saving the Sector - " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Exception::" +  ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.investnow.dao.model.User;
+import com.investnow.util.Constants;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,11 +36,14 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private ObjectMapper objectMapper;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper)
+    private String jwtSecret;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, String jwtSecret)
     {
         this.authenticationManager = authenticationManager;
         this.setAuthenticationManager(authenticationManager);
         this.objectMapper = objectMapper;
+        this.jwtSecret = jwtSecret;
     }
 
     @Override
@@ -54,13 +58,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = Jwts
                 .builder()
                 .setSubject(authResult.getName())
-                .claim("authorities", authResult.getAuthorities())
+                .claim(Constants.AUTHORITIES, authResult.getAuthorities())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
-                .signWith(SignatureAlgorithm.HS256, "axb".getBytes())
+                .signWith(SignatureAlgorithm.HS256, jwtSecret.getBytes())
                 .compact();
 
-        response.setHeader("Authorization", "bearer " + token);
+        response.setHeader(Constants.AUTHROIZATION, Constants.BEARER + token);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         User user = new User();
         user.setToken(token);
@@ -76,8 +80,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Map credentials = objectMapper.readValue(request.getInputStream(), Map.class);
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            credentials.get("userName"),
-                            credentials.get("password"),
+                            credentials.get(Constants.USER_NAME),
+                            credentials.get(Constants.PASSWORD),
                             new ArrayList<>()
                     )
             );
