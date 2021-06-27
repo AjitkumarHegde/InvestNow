@@ -25,3 +25,4 @@ spring:
 
 jwt:
   secret: changeit
+  expiration: 216000000

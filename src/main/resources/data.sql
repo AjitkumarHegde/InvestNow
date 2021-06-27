@@ -17,3 +17,6 @@ INSERT INTO fund (fund_name, description, created_at, minimum_investment, rating
  VALUES ('SBN Smallcap fund direct growth', 'SBN Smallcap fund direct growth', CURRENT_TIMESTAMP(), '2000', '4', "Suresh Naidu", '0.85', '0.005', '49943 cr', '12', 'Small Cap', 'Construction');
  INSERT INTO fund (fund_name, description, created_at, minimum_investment, rating, fund_manager, expense_ratio, exit_load, fund_size, yearly_returns_percentage, category, sector)
  VALUES ('Tatas Digital ind fund direct growth', 'Tatas Digital ind fund direct growth', CURRENT_TIMESTAMP(), '1000', '5', "Mahesh Naidu", '0.3', '0.005', '299404 cr', '17', 'Flexi Cap', 'Technology');
+
+INSERT INTO role (role_name) VALUES ('ROLE_USER');
+INSERT INTO role (role_name) VALUES ('ROLE_ADMIN');

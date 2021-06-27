@@ -78,6 +78,11 @@
     		<artifactId>commons-lang3</artifactId>
     		<version>3.12.0</version>
 		</dependency>
+		<dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+            <version>0.5.9</version>
+        </dependency>
 		<!-- Currently unused
 		<dependency>
    			<groupId>org.flywaydb</groupId>
