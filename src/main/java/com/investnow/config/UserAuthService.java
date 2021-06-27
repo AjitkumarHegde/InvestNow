@@ -1,31 +1,46 @@
 package com.investnow.config;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.investnow.dao.model.User;
-import com.investnow.dao.repository.UserRepository;
 
 @Service
-public class UserAuthService implements UserDetailsService
+public class UserAuthService
 {
-    private UserRepository userRepository;
+    private AuthenticationManager authManager;
+
+    private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserAuthService(UserRepository userRepository)
+    public UserAuthService(AuthenticationManager authManager, JwtTokenProvider jwtTokenProvider)
     {
-        this.userRepository = userRepository;
+        this.authManager = authManager;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
+    /**
+     * Authenticate user and log them in given a User
+     * @param user {@link User}
+     * @return {@link Authentication}
+     */
+    public Authentication authenticateUser(String userName, String password)
     {
-        Optional<User> user = userRepository.findByUserName(username);
-        return user.orElseThrow(() -> new UsernameNotFoundException("Invalid Login Attempt. User doesn't exist"));
+        Authentication auth = authManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        return auth;
+    }
+
+    /**
+     * Generate and return a user token
+     * user {@link User}
+     */
+    public String getUserToken(User user)
+    {
+        return jwtTokenProvider.generateToken(user);
     }
 }

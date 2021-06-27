@@ -1,16 +1,25 @@
 package com.investnow.dao.model;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -24,6 +33,7 @@ public class User extends BaseModel implements UserDetails
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(View.User.class)
+    @Column(name = "user_id")
     private Long userId;
 
     @JsonView(View.User.class)
@@ -60,7 +70,14 @@ public class User extends BaseModel implements UserDetails
     @Column(name = "not_locked", columnDefinition = "boolean default true")
     private boolean isNotLocked=true;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_authority", joinColumns = {
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id")}, inverseJoinColumns = {
+            @JoinColumn(name = "role_id", referencedColumnName = "role_id")})
+    private Set<Role> roles = new HashSet<>();
+
     @Transient
+    @JsonView(View.User.class)
     private String token;
 
     public Long getUserId()
@@ -161,7 +178,9 @@ public class User extends BaseModel implements UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
-        return null;
+        return getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRole()))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -205,5 +224,27 @@ public class User extends BaseModel implements UserDetails
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUserList().add(this);
+    }
+
+    public void addRoles(Set<Role> roles) {
+        roles.forEach(this::addRole);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+        role.getUserList().remove(this);
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> authorities) {
+        roles = authorities;
     }
 }

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -22,33 +22,26 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.investnow.api.impl.UserServiceImpl;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
-    private static String LOGIN_URI = "/user/login";
-
     @Value("${jwt.secret}")
     protected String jwtSecret;
 
-    private UserAuthService userAuthService;
-
-    private JwtTokenValidator jwtTokenValidator;
-
-    private ObjectMapper objectMapper;
+    private UserServiceImpl userService;
 
     @Autowired
-    public SecurityConfig(UserAuthService userAuthService, JwtTokenValidator jwtTokenValidator, ObjectMapper objectMapper)
+    public SecurityConfig(UserServiceImpl userService)
     {
-        this.userAuthService = userAuthService;
-        this.jwtTokenValidator = jwtTokenValidator;
-        this.objectMapper = objectMapper;
+        this.userService = userService;
     }
 
     @Override
@@ -74,10 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         http
             .csrf()
             .disable()
-            .addFilter(getJWTAuthenticationFilter())
-            .addFilterAfter(jwtTokenValidator, JWTAuthenticationFilter.class)
+            .addFilterBefore(jwtTokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
-            .antMatchers("/user/login", "/user/signup", "/v2/api-docs", "/configuration/ui", "/swagger-resources", "/swagger-ui.html", "/webjars/**")
+            .antMatchers("/**/user/***", "/v2/api-docs", "/configuration/ui", "/swagger-resources", "/swagger-ui.html", "/webjars/**")
             .permitAll()
             .anyRequest()
             .authenticated()
@@ -103,28 +95,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception
     {
-        auth.authenticationProvider(daoAuthenticationProvider());
-    }
-
-    public DaoAuthenticationProvider daoAuthenticationProvider()
-    {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userAuthService);
-        return provider;
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
 
     public PasswordEncoder passwordEncoder()
     {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public JWTAuthenticationFilter getJWTAuthenticationFilter() throws Exception
-    {
-        final JWTAuthenticationFilter jwtAuthenticationFilter = new JWTAuthenticationFilter(authenticationManagerBean(), objectMapper, jwtSecret);
-        jwtAuthenticationFilter.setFilterProcessesUrl(LOGIN_URI);
-        return jwtAuthenticationFilter;
     }
 
     @Bean
@@ -140,5 +116,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         FilterRegistrationBean<Filter> bean = new FilterRegistrationBean<Filter>(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
+    }
+
+    @Bean
+    public JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter() {
+        return new JwtTokenAuthenticationFilter();
+    }
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManager() throws Exception
+    {
+        return super.authenticationManager();
     }
 }
