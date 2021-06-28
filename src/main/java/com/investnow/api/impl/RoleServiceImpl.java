@@ -2,6 +2,7 @@ package com.investnow.api.impl;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -27,5 +28,15 @@ public class RoleServiceImpl implements RoleService
         Set<Role> roles = new HashSet<>();
         roles.addAll(rolesList);
         return roles;
+    }
+
+    @Override
+    public Role findRoleByRoleName(String roleName) throws Exception
+    {
+        Optional<Role> role = roleRepository.findByRole(roleName);
+        if(!role.isPresent())
+            throw new Exception("Role not found for the rolename " + roleName);
+        else
+            return role.get();
     }
 }

@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@RequestMapping("/sector")
 @RestController
 @Api(tags = "SectorController", produces = "application/json")
 public class SectorController
@@ -32,7 +31,7 @@ public class SectorController
     @Autowired
     private SectorService sectorService;
 
-    @RequestMapping(value = "/getAllSectors", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/sector/getAllSectors", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Fetch the list of sectors", notes = "Fetch the list of sectors", response = Sector.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
@@ -43,7 +42,7 @@ public class SectorController
         return new ResponseEntity(sectorService.getAllSectors(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/admin/sector/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Add a sector", notes = "Add a sector", response = Sector.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),

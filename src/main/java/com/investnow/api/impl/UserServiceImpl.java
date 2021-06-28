@@ -1,5 +1,6 @@
 package com.investnow.api.impl;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,6 +18,8 @@ import com.investnow.dao.repository.UserRepository;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService
 {
+    private static final String USER_ROLE = "ROLE_USER";
+
     private UserRepository userRepository;
 
     private RoleService roleService;
@@ -37,7 +40,8 @@ public class UserServiceImpl implements UserService, UserDetailsService
             throw new Exception("User " + user.getUsername() + " already exists");
         }
 
-        Set<Role> roles = roleService.findRoles();
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleService.findRoleByRoleName(USER_ROLE));
         user.addRoles(roles);
         return userRepository.save(user);
     }

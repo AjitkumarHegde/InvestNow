@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@RequestMapping("/category")
 @RestController
 @Api(tags = "CategoryController", produces = "application/json")
 public class CategoryController
@@ -32,7 +31,7 @@ public class CategoryController
     @Autowired
     private CategoryService categoryService;
 
-    @RequestMapping(value = "/getAllCategories", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/category/getAllCategories", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Fetch the list of categories", notes = "Fetch the list of categories", response = Category.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
@@ -43,7 +42,7 @@ public class CategoryController
         return new ResponseEntity(categoryService.getAllCategories(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/admin/category/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Add a category", notes = "Add a category", response = Category.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),

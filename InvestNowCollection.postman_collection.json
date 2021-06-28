@@ -1,0 +1,507 @@
+{
+	"info": {
+		"_postman_id": "d7fbc728-26d3-434d-b1e4-d85149c9715c",
+		"name": "InvestNowCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User Signup",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"Initializing Variables\");",
+							"",
+							"pm.environment.set(\"username\", \"test\");",
+							"pm.environment.set(\"password\", \"test\");",
+							"",
+							"pm.environment.set(\"hostName\", \"http://localhost:9191\");",
+							"pm.environment.set(\"Delay\", 3000);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userName\" : \"test\",\n    \"firstName\" : \"testFirstName\",\n    \"lastName\" : \"testLastName\",\n    \"password\" : \"test\",\n    \"pan\" : \"testPan\",\n    \"passportNumber\" : \"testPassport\",\n    \"address\" : \"testAddress\",\n    \"contactNumber\" : \"9000000010\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/user/signup",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"user",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Setting env variables\");",
+							"",
+							"//Test for the status code",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//Set the access token",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token); ",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\" : \"test\",\n    \"password\" : \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/user/login",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all categories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/category/getAllCategories",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"category",
+						"getAllCategories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all sectors",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/sector/getAllSectors",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"sector",
+						"getAllSectors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all funds",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/fund/getAllFunds",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"fund",
+						"getAllFunds"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Invest",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userName\": \"{{username}}\",\n    \"fundId\": 1,\n    \"amountInvested\": \"10000\",\n    \"numberOfYears\": \"3\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/invest",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"invest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get investments By User",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/getInvestmentsByUser?user={{username}}",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"getInvestmentsByUser"
+					],
+					"query": [
+						{
+							"key": "user",
+							"value": "{{username}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get investments By Fund",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/getInvestmentsByFund?fund=1",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"getInvestmentsByFund"
+					],
+					"query": [
+						{
+							"key": "fund",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/user/logout?userName={{username}}",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"user",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "{{username}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login as Admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"console.log(\"Setting env variables\");",
+							"",
+							"pm.environment.set(\"username\", \"admin\");",
+							"//Test for the status code",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//Set the access token",
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token); ",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"root@123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/user/login",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add category",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"categoryName\" : \"test\",\n    \"description\" : \"test category\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/admin/category/add",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"admin",
+						"category",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add sector",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sectorName\" : \"test2\",\n    \"description\" : \"test sector\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/admin/sector/add",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"admin",
+						"sector",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add fund",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fundName\" : \"test\",\n    \"description\" : \"test fund\",\n    \"minimumInvestment\" : \"3000\",\n    \"rating\" : \"2\",\n    \"fundManagerName\" : \"2\",\n    \"expenseRatio\" : \"0.4\",\n    \"exitLoad\" : \"0.002\",\n    \"fundSize\" : \"20000 Cr\",\n    \"yearlyReturnsPercentage\" : \"18\",\n    \"category\" : \"Mid Cap\",\n    \"sector\" : \"Services\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{hostName}}/admin/fund/add",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"admin",
+						"fund",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{hostName}}/user/logout?userName={{username}}",
+					"host": [
+						"{{hostName}}"
+					],
+					"path": [
+						"user",
+						"logout"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "{{username}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
