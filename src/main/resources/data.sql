@@ -18,5 +18,11 @@ INSERT INTO fund (fund_name, description, created_at, minimum_investment, rating
  INSERT INTO fund (fund_name, description, created_at, minimum_investment, rating, fund_manager, expense_ratio, exit_load, fund_size, yearly_returns_percentage, category, sector)
  VALUES ('Tatas Digital ind fund direct growth', 'Tatas Digital ind fund direct growth', CURRENT_TIMESTAMP(), '1000', '5', "Mahesh Naidu", '0.3', '0.005', '299404 cr', '17', 'Flexi Cap', 'Technology');
 
-INSERT INTO role (role_name) VALUES ('ROLE_USER');
-INSERT INTO role (role_name) VALUES ('ROLE_ADMIN');
+INSERT INTO role (role_id, role_name) VALUES (10002, 'ROLE_USER');
+INSERT INTO role (role_id, role_name) VALUES (10001, 'ROLE_ADMIN');
+
+
+INSERT INTO user (user_id, user_name, first_name, last_name, password, pan, passport_number, address, contact_number, email)
+ VALUES (10001, 'admin', 'admin', 'user', '$2a$10$rJYwCjM.Ki0M9UGgw8ayzOaYC8zyuWQsho0VbKHBJQL3nGPez6ajy', 'adminpan', 'admin_112', 'LA', '9191919191', 'admin@somemail.com');
+
+INSERT INTO user_authority (role_id, user_id) VALUES (10001, 10001);

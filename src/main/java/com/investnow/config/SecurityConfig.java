@@ -71,6 +71,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
             .authorizeRequests()
             .antMatchers("/**/user/***", "/v2/api-docs", "/configuration/ui", "/swagger-resources", "/swagger-ui.html", "/webjars/**")
             .permitAll()
+            .antMatchers("/admin/**").hasAnyRole("ADMIN")
             .anyRequest()
             .authenticated()
             .and()
@@ -86,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                             )
                                     throws IOException                            {
                                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                                response.getWriter().write("Access denied!");
+                                response.getWriter().write("Access denied! Login in as Admin");
                             }
                         }
                 );

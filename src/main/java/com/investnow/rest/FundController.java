@@ -23,7 +23,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@RequestMapping("/fund")
 @RestController
 @Api(tags = "FundController", produces = "application/json")
 public class FundController
@@ -33,7 +32,7 @@ public class FundController
     @Autowired
     private FundService fundService;
 
-    @RequestMapping(value = "/getAllFunds", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/fund/getAllFunds", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Fetch the list of funds", notes = "Fetch the list of funds", response = Fund.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
@@ -44,7 +43,7 @@ public class FundController
         return new ResponseEntity(fundService.getAllFunds(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/admin/fund/add", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ApiOperation(value = "Add a fund", notes = "Add a fund", response = Fund.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
