@@ -20,10 +20,12 @@ Functionality
 
 Usage:
 
+```
 To run InvestNow application and MySQL containers in background -
 docker-compose up -d
 
 To run as a standalone SpringBoot application, update the database connection properties.
+```
 
 Scope/RoadMap
 
